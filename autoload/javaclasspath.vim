@@ -36,7 +36,7 @@ let s:obj= {
 "
 function! s:obj.classpath()
     let l:paths= self.parse()
-    let l:classpaths= filter(l:classpaths, 'v:val.kind ==# "lib"')
+    let l:classpaths= filter(l:paths, 'v:val.kind ==# "lib"')
 
     return join(map(l:classpaths, 'v:val.path'), s:jlang.constants.path_separator)
 endfunction
@@ -46,7 +46,7 @@ endfunction
 "
 function! s:obj.source_path()
     let l:paths= self.parse()
-    let l:sourcepaths= filter(l:classpaths, 'v:val.kind ==# "src"')
+    let l:sourcepaths= filter(l:paths, 'v:val.kind ==# "src"')
 
     return join(map(l:classpaths, 'v:val.path'), s:jlang.constants.path_separator)
 endfunction
