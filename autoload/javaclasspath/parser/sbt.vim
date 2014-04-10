@@ -64,4 +64,9 @@ function! s:obj.parse(config)
     return l:classpaths
 endfunction
 
+function! javaclasspath#parser#sbt#define()
+    return deepcopy(s:obj)
+endfunction
 
+let &cpo= s:save_cpo
+unlet s:save_cpo
