@@ -7,5 +7,11 @@ task :dump do
 end
 
 task :test do
+    sh <<'...'
+if ! [ -d .vim-test/ ]; then
+    mkdir .vim-test/
+    git clone https://github.com/kamichidu/vim-javalang.git .vim-test/vim-javalang/
+fi
+...
     sh 'bundle exec vim-flavor test'
 end
