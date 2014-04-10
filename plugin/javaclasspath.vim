@@ -40,6 +40,9 @@ let g:javaclasspath_config= {
 \   'eclipse': {
 \       'filename': '.classpath',
 \   },
+\   'sbt': {
+\       'filename': 'build.sbt',
+\   },
 \   'variable': {
 \       'paths': [],
 \   },
