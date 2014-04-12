@@ -45,6 +45,15 @@ Acknowledgement                                |javaclasspath-acknowledgement|
 ==============================================================================
 ABSTRACT                                              *javaclasspath-abstract*
 
+*vim-javaclasspath* is a plugin to give classpath information. this is for
+developping plugin which using jvm.
+this aim to give a common way to cofigure some plugin which is using jvm
+(java, scala, et al.).
+
+Prequirements ~
+
+* |vim-javalang| - https://github.com/kamichidu/vim-javalang
+
 ==============================================================================
 CONFIGURATION                                    *javaclasspath-configuration*
 
@@ -167,6 +176,11 @@ BUILT-IN PARSERS                               *javaclasspath-builtin-parsers*
 standard
     this parser recognize some paths by $JAVA_HOME or |String| related
     java_home key.
+
+    - libs      |List| of |Dictionary| (required)
+      - path    |String| (required)
+      - javadoc |String| (optional)
+    - java_home |String| (optional)
 >
     let g:javaclasspath_config= {
     \   'standard': {
@@ -183,6 +197,8 @@ variable
     this parser recognize configured |Dictionary| value. its specification is
     same to parse() returned.
     see |javaclasspath-parser-module| for configuration.
+
+    - paths |List| of |Dictionary| (required)
 >
     let g:javaclasspath_config= {
     \   'variable': {
@@ -197,6 +213,8 @@ variable
 <
 eclipse
     this parser recognize eclipse's .classpath configuration file.
+
+    - filename |String| (required)
 >
     let g:javaclasspath_config= {
     \   'eclipse': {
@@ -206,6 +224,8 @@ eclipse
 <
 sbt
     this parser recognize sbt's build definition file.
+
+    - filename |String| (required)
 >
     let g:javaclasspath_config= {
     \   'sbt': {
