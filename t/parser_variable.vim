@@ -3,31 +3,46 @@ filetype plugin indent on
 
 describe 'javaclasspath#parser#variable.parse()'
     before
-        let g:javaclasspath_config= {
-        \   'variable': {
-        \       'paths': [
-        \           {
-        \               'kind': 'lib',
-        \               'path': 'path/to/jar',
-        \           },
-        \           {
-        \               'kind': 'src',
-        \               'path': 'path/to/srcdir',
-        \           },
-        \       ],
-        \   },
-        \}
-        let s:parser= javaclasspath#get()
+        let s:parser= javaclasspath#parser#variable#define()
     end
 
     after
-        unlet g:javaclasspath_config
         unlet s:parser
     end
 
-    it 'return g:javaclasspath_config.variable.paths'
-        let l:paths= s:parser.parse()
+    it 'return paths directly'
+        let l:paths= s:parser.parse({
+        \   'paths': [
+        \       {
+        \           'kind': 'lib',
+        \           'path': 'path/to/jar',
+        \       },
+        \       {
+        \           'kind': 'src',
+        \           'path': 'path/to/srcdir',
+        \       },
+        \   ],
+        \})
 
-        Expect l:paths == g:javaclasspath_config.variable.paths
+        Expect l:paths == [
+        \   {
+        \       'kind': 'lib',
+        \       'path': 'path/to/jar',
+        \   },
+        \   {
+        \       'kind': 'src',
+        \       'path': 'path/to/srcdir',
+        \   },
+        \]
+    end
+
+    it 'return empty list when arguments not passed'
+        let l:paths= s:parser.parse({})
+
+        Expect l:paths == []
+
+        let l:paths= s:parser.parse({'paths': []})
+
+        Expect l:paths == []
     end
 end
