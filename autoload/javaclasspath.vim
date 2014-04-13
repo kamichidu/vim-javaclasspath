@@ -25,6 +25,7 @@ let s:save_cpo= &cpo
 set cpo&vim
 
 let s:jlang= javalang#get()
+let s:helper= javaclasspath#helper#get()
 
 let s:obj= {
 \   '_parsers': [],
@@ -63,11 +64,15 @@ function! s:obj.parse()
     let l:classpaths= []
 
     for l:parser in self._parsers
-        let l:config= self.config(l:parser)
+        try
+            let l:config= self.config(l:parser)
 
-        let l:buf= l:parser.parse(l:config)
+            let l:buf= l:parser.parse(l:config)
 
-        call extend(l:classpaths, l:buf)
+            call extend(l:classpaths, l:buf)
+        catch /.*/
+            call s:helper.error(join([l:parser.name, v:exception], '/'))
+        endtry
     endfor
 
     return l:classpaths
@@ -75,9 +80,18 @@ endfunction
 
 function! s:obj.config(parser)
     if exists('b:javaclasspath_config') && has_key(b:javaclasspath_config, a:parser.name)
-        return b:javaclasspath_config[a:parser.name]
+        let l:config= b:javaclasspath_config[a:parser.name]
     else
-        return self._config[a:parser.name]
+        let l:config= self._config[a:parser.name]
+    endif
+
+    " validate if enabled argument validation
+    if has_key(a:parser, 'config')
+        let l:validator= s:helper.arguments(a:parser.config)
+
+        return l:validator.apply(l:config)
+    else
+        return l:config
     endif
 endfunction
 
