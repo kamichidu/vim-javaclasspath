@@ -26,6 +26,11 @@ set cpo&vim
 
 let s:obj= {
 \   'name': 'variable',
+\   'config': {
+\       'paths': {
+\           'type': type([]),
+\       },
+\   },
 \}
 
 function! s:obj.parse(config)
