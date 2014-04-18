@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+    <classpathentry kind="src" path="src"/>
+    <classpathentry kind="src" path="test"/>
+    <classpathentry kind="src" path="conf"/>
+    <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+    <classpathentry exported="true" kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.core.commands_3.6.1.v20120814-150512.jar"/>
+    <classpathentry exported="true" kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.equinox.common_3.6.100.v20120522-1841.jar"/>
+    <classpathentry exported="true" kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.jface_3.8.101.v20120817-083647.jar" sourcepath="/ECLIPSE_HOME/plugins/org.eclipse.jface.source_3.8.101.v20120817-083647.jar"/>
+    <classpathentry exported="true" kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.osgi_3.8.1.v20120830-144521.jar"/>
+    <classpathentry kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.swt.gtk.linux.x86_64_3.100.1.v4234e.jar" sourcepath="/ECLIPSE_HOME/plugins/org.eclipse.swt.gtk.linux.x86_64.source_3.100.1.v4234e.jar"/>
+    <classpathentry exported="true" kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.ui.workbench_3.103.1.v20120906-120042.jar"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/HibernateSQLite"/>
+    <classpathentry kind="lib" path="lib/commons-io.jar" sourcepath="lib/commons-io-2.4-src/src/main"/>
+    <classpathentry kind="lib" path="lib/guava.jar" sourcepath="/home/kamichidu/documents/sources/java/guava-libraries/guava/src"/>
+    <classpathentry kind="lib" path="build/lib/hibernate-tools-4.0.0.jar"/>
+    <classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+    <classpathentry kind="output" path="bin"/>
+</classpath>
