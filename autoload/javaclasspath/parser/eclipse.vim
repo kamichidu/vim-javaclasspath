@@ -32,6 +32,12 @@ unlet s:V
 
 let s:obj= {
 \   'name': 'eclipse',
+\   'config': {
+\       'filename': {
+\           'type':     type(''),
+\           'required': 1,
+\       },
+\   },
 \}
 
 " classpath entry maker for supported kinds {{{
