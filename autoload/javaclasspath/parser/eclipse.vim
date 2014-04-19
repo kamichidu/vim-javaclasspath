@@ -37,6 +37,9 @@ let s:obj= {
 \           'type':     type(''),
 \           'required': 1,
 \       },
+\       'vars': {
+\           'type': type([]),
+\       },
 \   },
 \}
 
@@ -44,6 +47,7 @@ let s:obj= {
 let s:maker= {
 \   'lib': {},
 \   'src': {},
+\   'var': {},
 \}
 
 function! s:maker.lib.can(config, entry)
@@ -65,6 +69,24 @@ function! s:maker.src.create(config, entry)
     return {
     \   'kind': 'src',
     \   'path': a:entry.attr.path,
+    \}
+endfunction
+
+function! s:maker.var.can(config, entry)
+    let l:vars= get(a:config, 'vars', {})
+
+    let l:var_name= matchstr(a:entry.attr.path, '^\w\+')
+
+    return has_key(l:vars, l:var_name)
+endfunction
+
+function! s:maker.var.create(config, entry)
+    let l:var_name= matchstr(a:entry.attr.path, '^\w\+')
+    let l:var_value= a:config.vars[l:var_name]
+
+    return {
+    \   'kind': 'lib',
+    \   'path': s:S.replace_first(a:entry.attr.path, l:var_name, l:var_value),
     \}
 endfunction
 " }}}

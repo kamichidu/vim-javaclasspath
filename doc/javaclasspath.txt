@@ -2,7 +2,7 @@
 
 Version:     0.00
 Author:      kamichidu <c.kamunagi@gmail.com>
-Last Change: 12-Apr-2014.
+Last Change: 20-Apr-2014.
 License:     The MIT License (MIT)
 
 Copyright (c) 2014 kamichidu
@@ -214,11 +214,15 @@ variable
 eclipse
     this parser recognize eclipse's .classpath configuration file.
 
-    - filename |String| (required)
+    - filename |String|     (required)
+    - vars     |Dictionary| (optional)
 >
     let g:javaclasspath_config= {
     \   'eclipse': {
     \       'filename': '.classpath',
+    \       'vars': {
+    \           'ECLIPSE_HOME': 'path/to/eclipse/home',
+    \       },
     \   },
     \}
 <
