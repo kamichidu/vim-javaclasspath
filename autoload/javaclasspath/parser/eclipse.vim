@@ -34,6 +34,35 @@ let s:obj= {
 \   'name': 'eclipse',
 \}
 
+" classpath entry maker for supported kinds {{{
+let s:maker= {
+\   'lib': {},
+\   'src': {},
+\}
+
+function! s:maker.lib.can(config, entry)
+    return 1
+endfunction
+
+function! s:maker.lib.create(config, entry)
+    return {
+    \   'kind': 'lib',
+    \   'path': a:entry.attr.path,
+    \}
+endfunction
+
+function! s:maker.src.can(config, entry)
+    return 1
+endfunction
+
+function! s:maker.src.create(config, entry)
+    return {
+    \   'kind': 'src',
+    \   'path': a:entry.attr.path,
+    \}
+endfunction
+" }}}
+
 function! s:obj.parse(config)
     if !filereadable(a:config.filename)
         return []
@@ -43,13 +72,12 @@ function! s:obj.parse(config)
     let l:classpaths= []
 
     for l:entry in l:dom.childNodes('classpathentry')
-        if l:entry.attr['kind'] =~# '\C^\%(lib\|src\)$'
-            let l:classpath= {
-            \   'kind': l:entry.attr['kind'],
-            \   'path': l:entry.attr['path'],
-            \}
+        if has_key(s:maker, l:entry.attr.kind)
+            let l:maker= s:maker[l:entry.attr.kind]
 
-            call add(l:classpaths, l:classpath)
+            if l:maker.can(a:config, l:entry)
+                call add(l:classpaths, l:maker.create(a:config, l:entry))
+            endif
         endif
     endfor
 
