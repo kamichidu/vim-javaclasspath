@@ -43,6 +43,9 @@ let g:javaclasspath_config= {
 \   'sbt': {
 \       'filename': 'build.sbt',
 \   },
+\   'maven': {
+\       'filename': 'pom.xml',
+\   },
 \   'variable': {
 \       'paths': [],
 \   },
