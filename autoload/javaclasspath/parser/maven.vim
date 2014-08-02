@@ -47,20 +47,20 @@ function! s:obj.parse(config)
         return []
     endif
     let path= fnamemodify(a:config.filename, ':p')
-    let timestamp= s:timestamp(path)
+    let timestamp= getftime(path)
 
     if has_key(s:timestamp_cache, path) && s:timestamp_cache[path] == timestamp
         return deepcopy(s:classpath_cache[path])
     endif
 
-    let l:tfile= tempname()
-    let l:cmd=   'mvn dependency:build-classpath -Dmdep.outputFile=' . l:tfile
+    let tfile= tempname()
+    let cmd=   'mvn dependency:build-classpath -Dmdep.outputFile=' . tfile
 
-    call s:P.system(l:cmd)
+    call s:P.system(cmd)
 
-    let l:classpath= join(readfile(l:tfile), s:jlang.constants.path_separator)
+    let classpath= join(readfile(tfile), s:jlang.constants.path_separator)
 
-    let l:classpaths= map(split(l:classpath, s:jlang.constants.path_separator, 0), "
+    let classpaths= map(split(classpath, s:jlang.constants.path_separator, 0), "
     \   {
     \       'kind': 'lib',
     \       'path': v:val,
@@ -68,21 +68,9 @@ function! s:obj.parse(config)
     \")
 
     let s:timestamp_cache[path]= timestamp
-    let s:classpath_cache[path]= deepcopy(l:classpaths)
+    let s:classpath_cache[path]= deepcopy(classpaths)
 
-    return l:classpaths
-endfunction
-
-function! s:timestamp(filename)
-    let filename= fnamemodify(a:filename, ':p')
-
-    perl << ...
-    my $filename= VIM::Eval('filename');
-    my ($dev, $ino, $mode, $nlink, $uid, $gid, $rdev, $size, $atime, $mtime, $ctime, $blksize, $blocks)= stat $filename;
-
-    VIM::DoCommand qq/let retval= $mtime/;
-...
-    return retval
+    return classpaths
 endfunction
 
 function! javaclasspath#parser#maven#define()
