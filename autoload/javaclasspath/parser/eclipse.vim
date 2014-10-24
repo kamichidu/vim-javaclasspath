@@ -73,20 +73,20 @@ function! s:maker.src.create(config, entry)
 endfunction
 
 function! s:maker.var.can(config, entry)
-    let l:vars= get(a:config, 'vars', {})
+    let vars= get(a:config, 'vars', {})
 
-    let l:var_name= matchstr(a:entry.attr.path, '^\w\+')
+    let var_name= matchstr(a:entry.attr.path, '^\w\+')
 
-    return has_key(l:vars, l:var_name)
+    return has_key(vars, var_name)
 endfunction
 
 function! s:maker.var.create(config, entry)
-    let l:var_name= matchstr(a:entry.attr.path, '^\w\+')
-    let l:var_value= a:config.vars[l:var_name]
+    let var_name= matchstr(a:entry.attr.path, '^\w\+')
+    let var_value= a:config.vars[var_name]
 
     return {
     \   'kind': 'lib',
-    \   'path': s:S.replace_first(a:entry.attr.path, l:var_name, l:var_value),
+    \   'path': s:S.replace_first(a:entry.attr.path, var_name, var_value),
     \}
 endfunction
 " }}}
@@ -96,20 +96,20 @@ function! s:obj.parse(config)
         return []
     endif
 
-    let l:dom= s:X.parseFile(a:config.filename)
-    let l:classpaths= []
+    let dom= s:X.parseFile(a:config.filename)
+    let classpaths= []
 
-    for l:entry in l:dom.childNodes('classpathentry')
-        if has_key(s:maker, l:entry.attr.kind)
-            let l:maker= s:maker[l:entry.attr.kind]
+    for entry in dom.childNodes('classpathentry')
+        if has_key(s:maker, entry.attr.kind)
+            let maker= s:maker[entry.attr.kind]
 
-            if l:maker.can(a:config, l:entry)
-                call add(l:classpaths, l:maker.create(a:config, l:entry))
+            if maker.can(a:config, entry)
+                call add(classpaths, maker.create(a:config, entry))
             endif
         endif
     endfor
 
-    return l:classpaths
+    return classpaths
 endfunction
 
 function! javaclasspath#parser#eclipse#define()
