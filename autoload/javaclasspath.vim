@@ -46,10 +46,10 @@ endfunction
 " return joined source path.
 "
 function! s:obj.source_path()
-    let l:paths= self.parse()
-    let l:sourcepaths= filter(l:paths, 'v:val.kind ==# "src"')
+    let paths= self.parse()
+    let sourcepaths= filter(paths, 'v:val.kind ==# "src"')
 
-    return join(map(l:classpaths, 'v:val.path'), s:jlang.constants.path_separator)
+    return join(map(sourcepaths, 'v:val.path'), s:jlang.constants.path_separator)
 endfunction
 
 "
