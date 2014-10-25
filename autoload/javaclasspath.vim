@@ -40,10 +40,10 @@ let s:obj= {
 " return joined classpaths.
 "
 function! s:obj.classpath()
-    let l:paths= self.parse()
-    let l:classpaths= filter(l:paths, 'v:val.kind ==# "lib"')
+    let paths= self.parse()
+    let classpaths= filter(paths, 'v:val.kind ==# "lib"')
 
-    return join(map(l:classpaths, 'v:val.path'), s:jlang.constants.path_separator)
+    return join(map(classpaths, 'v:val.path'), s:jlang.constants.path_separator)
 endfunction
 
 "
@@ -65,37 +65,37 @@ endfunction
 "   javadoc - uri of javadoc attached to its path
 "
 function! s:obj.parse()
-    let l:classpaths= []
+    let classpaths= []
 
-    for l:parser in self._parsers
+    for parser in self._parsers
         try
-            let l:config= self.config(l:parser)
+            let config= self.config(parser)
 
-            let l:buf= l:parser.parse(l:config)
+            let buf= parser.parse(config)
 
-            call extend(l:classpaths, l:buf)
+            call extend(classpaths, buf)
         catch /.*/
-            call s:helper.error(join([l:parser.name, v:exception], '/'))
+            call s:helper.error(join([parser.name, v:exception], '/'))
         endtry
     endfor
 
-    return l:classpaths
+    return classpaths
 endfunction
 
 function! s:obj.config(parser)
     if exists('b:javaclasspath_config') && has_key(b:javaclasspath_config, a:parser.name)
-        let l:config= b:javaclasspath_config[a:parser.name]
+        let config= b:javaclasspath_config[a:parser.name]
     else
-        let l:config= self._config[a:parser.name]
+        let config= self._config[a:parser.name]
     endif
 
     " validate if enabled argument validation
     if has_key(a:parser, 'config')
-        let l:validator= s:helper.arguments(a:parser.config)
+        let validator= s:helper.arguments(a:parser.config)
 
-        return l:validator.apply(l:config)
+        return validator.apply(config)
     else
-        return l:config
+        return config
     endif
 endfunction
 
@@ -110,15 +110,15 @@ endfunction
 "       see each parser's documentation for more details.
 "
 function! javaclasspath#get()
-    let l:obj= deepcopy(s:obj)
+    let obj= deepcopy(s:obj)
 
-    let l:obj._config= deepcopy(g:javaclasspath_config)
+    let obj._config= deepcopy(g:javaclasspath_config)
 
-    for l:format in keys(l:obj._config)
-        call add(l:obj._parsers, javaclasspath#parser#{l:format}#define())
+    for format in keys(obj._config)
+        call add(obj._parsers, javaclasspath#parser#{format}#define())
     endfor
 
-    return l:obj
+    return obj
 endfunction
 
 function! javaclasspath#on_filetype()
