@@ -273,6 +273,17 @@ sbt
 	\   },
 	\}
 <
+maven
+	This parser recognize pom.xml file.
+
+	- filename |String| (Required)
+>
+	let g:javaclasspath_config= {
+	\   'maven': {
+	\	'filename': 'pom.xml',
+	\   },
+	\}
+<
 
 ==============================================================================
 ACKNOWLEDGEMENT				       *javaclasspath-acknowledgement*
