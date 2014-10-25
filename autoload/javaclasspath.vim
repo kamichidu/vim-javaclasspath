@@ -99,6 +99,14 @@ function! s:obj.config(parser)
     endif
 endfunction
 
+function! javaclasspath#classpath()
+    return javaclasspath#get().classpath()
+endfunction
+
+function! javaclasspath#source_path()
+    return javaclasspath#get().source_path()
+endfunction
+
 "
 " get parser object to parse any format you like.
 "
