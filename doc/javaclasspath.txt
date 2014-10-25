@@ -1,6 +1,6 @@
 *vim-javaclasspath.txt*                  give path information to other plugin
 
-Version:     0.0.1
+Version:     0.0.2
 Author:      kamichidu <c.kamunagi@gmail.com>
 Last Change: 25-Oct-2014.
 License:     The MIT License (MIT)
