@@ -161,7 +161,6 @@ function! s:generate_effective_pom(config)
     \   printf('>"%s"', mem.stdout),
     \   printf('2>"%s"', mem.stderr),
     \])
-    call vimconsole#log(command)
     call s:P.spawn(command)
 endfunction
 
