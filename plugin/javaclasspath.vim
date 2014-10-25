@@ -51,5 +51,10 @@ let g:javaclasspath_config= {
 \   },
 \}
 
+augroup javaclasspath-event-handler
+    autocmd!
+    autocmd FileType * call javaclasspath#on_filetype()
+augroup END
+
 let &cpo= s:save_cpo
 unlet s:save_cpo

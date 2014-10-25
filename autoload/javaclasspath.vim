@@ -24,6 +24,10 @@
 let s:save_cpo= &cpo
 set cpo&vim
 
+let s:V= vital#of('javaclasspath')
+let s:M= s:V.import('Vim.Message')
+unlet s:V
+
 let s:jlang= javalang#get()
 let s:helper= javaclasspath#helper#get()
 
@@ -115,6 +119,43 @@ function! javaclasspath#get()
     endfor
 
     return l:obj
+endfunction
+
+function! javaclasspath#on_filetype()
+    if exists('s:on_filetype_parsers')
+        for parser_name in s:on_filetype_parsers
+            try
+                let config= get(g:javaclasspath_config, parser_name, {})
+
+                call javaclasspath#parser#{parser_name}#on_filetype(config)
+            catch
+                call s:M.error(v:exception)
+                call s:M.error(v:throwpoint)
+            endtry
+        endfor
+    else
+        let files= split(globpath(&runtimepath, 'autoload/javaclasspath/parser/*.vim'), "\n")
+        let parser_names= map(files, 'fnamemodify(v:val, ":t:r")')
+
+        let s:on_filetype_parsers= []
+        for parser_name in parser_names
+            try
+                let config= get(g:javaclasspath_config, parser_name, {})
+
+                call javaclasspath#parser#{parser_name}#on_filetype(config)
+                let s:on_filetype_parsers+= [parser_name]
+            catch /^javaclasspath:/
+                call s:M.error(v:exception)
+                call s:M.error(v:throwpoint)
+                let s:on_filetype_parsers+= [parser_name]
+            catch /E117/
+                " ignore
+            catch
+                call s:M.error(v:exception)
+                call s:M.error(v:throwpoint)
+            endtry
+        endfor
+    endif
 endfunction
 
 let &cpo= s:save_cpo
