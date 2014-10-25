@@ -10,7 +10,7 @@ function! s:_vital_loaded(V)
 endfunction
 
 function! s:_vital_depends()
-  return ['Data.String']
+  return ['Data.String', 'Process']
 endfunction
 
 function! s:is_available()
@@ -32,6 +32,9 @@ function! s:_stop(i, ...)
   call p.kill(get(a:000, 0, 0) ? g:vimproc#SIGKILL : g:vimproc#SIGTERM)
   " call p.waitpid()
   unlet s:_processes[a:i]
+  if has_key(s:state, a:i)
+    unlet s:state[a:i]
+  endif
 endfunction
 
 function! s:term(i)
@@ -46,6 +49,8 @@ function! s:read(i, endpatterns)
   return s:read_wait(a:i, 0.05, a:endpatterns)
 endfunction
 
+let s:state = {}
+
 function! s:read_wait(i, wait, endpatterns)
   if !has_key(s:_processes, a:i)
     throw printf("ProcessManager doesn't know about %s", a:i)
@@ -54,6 +59,7 @@ function! s:read_wait(i, wait, endpatterns)
   let p = s:_processes[a:i]
 
   if s:status(a:i) ==# 'inactive'
+    let s:state[a:i] = 'inactive'
     return [p.stdout.read(), p.stderr.read(), 'inactive']
   endif
 
@@ -64,6 +70,7 @@ function! s:read_wait(i, wait, endpatterns)
     let [x, y] = [p.stdout.read(), p.stderr.read()]
     if x ==# '' && y ==# ''
       if str2float(reltimestr(reltime(lastchanged))) > a:wait
+        let s:state[a:i] = 'reading'
         return [out_memo, err_memo, 'timedout']
       endif
     else
@@ -72,11 +79,16 @@ function! s:read_wait(i, wait, endpatterns)
       let err_memo .= y
       for pattern in a:endpatterns
         if out_memo =~ ("\\(^\\|\n\\)" . pattern)
+          let s:state[a:i] = 'idle'
           return [s:S.substitute_last(out_memo, pattern, ''), err_memo, 'matched']
         endif
       endfor
     endif
   endwhile
+endfunction
+
+function! s:state(i)
+  return get(s:state, a:i, 'undefined')
 endfunction
 
 function! s:write(i, str)
