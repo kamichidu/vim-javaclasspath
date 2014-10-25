@@ -2,3 +2,4 @@
 .vim-flavor/
 .vim-test/
 *.lock
+.vim-themis/
