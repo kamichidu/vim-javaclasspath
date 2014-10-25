@@ -42,14 +42,14 @@ function! s:helper.arguments(defs)
         " only has a defined keys
         let l:invalid_keys= filter(copy(keys(a:args)), '!s:L.has(self.properties, v:val)')
         if !empty(l:invalid_keys)
-            throw 'unknown argument: ' . string(l:invalid_keys)
+            throw 'javaclasspath: Unknown argument: ' . string(l:invalid_keys)
         endif
         unlet l:invalid_keys
 
         " required
         let l:missing_requires= filter(copy(self.requires), '!has_key(a:args, v:val)')
         if !empty(l:missing_requires)
-            throw 'missing required properties: ' . string(l:missing_requires)
+            throw 'javaclasspath: Missing required properties: ' . string(l:missing_requires)
         endif
         unlet l:missing_requires
 
@@ -71,7 +71,7 @@ function! s:helper.arguments(defs)
             unlet l:def
         endfor
         if !empty(l:type_mismatches)
-            throw join(l:type_mismatches, "\n")
+            throw 'javaclasspath: ' . join(l:type_mismatches, "\n")
         endif
         unlet l:property
         unlet l:type_mismatches
