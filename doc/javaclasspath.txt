@@ -94,6 +94,23 @@ javaclasspath#get()
 	Returns a |Dictionary| which has some |Dictionary-function|s below.
 
 	parse()
+		Returns a |List| has |Dictionary| elements. It parses using
+		|javaclasspath-parser-module|. Each |Dictionary| has:
+
+		- kind
+			One of these |String|
+
+			- lib (a classpath)
+			- src (a source path)
+
+		- path
+			Filename or directory path
+
+		- javadoc (Optional)
+			URL or file/directory path
+
+		- sourcepath (Optional)
+			Filename or directory which is attached.
 
 	classpath()
 		Returns a |String| which is joined using
