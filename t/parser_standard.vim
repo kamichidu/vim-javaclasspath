@@ -1,23 +1,26 @@
-set runtimepath+=./.vim-test/*
-filetype plugin indent on
+let s:suite= themis#suite('standard parser')
+let s:assert= themis#helper('assert')
+call themis#helper('command')
 
-describe 'javaclasspath#parser#standard.parse()'
-    before
-        let s:save_java_home= $JAVA_HOME
-        let s:parser= javaclasspath#parser#standard#define()
-    end
+function! s:suite.before_each()
+    let s:save_java_home= $JAVA_HOME
+    let s:parser= javaclasspath#parser#standard#define()
+endfunction
 
-    after
-        let $JAVA_HOME= s:save_java_home
-        unlet s:parser
-    end
+function! s:suite.after_each()
+    let $JAVA_HOME= s:save_java_home
+    unlet s:parser
+endfunction
 
-    it 'return fully filename via $JAVA_HOME'
+function! s:suite.__parse__()
+    let parse_suite= themis#suite('parse()')
+
+    function! parse_suite.returns_fully_filename_via_JAVA_HOME()
         if !exists('$JAVA_HOME')
-            SKIP '$JAVA_HOME is not exists.'
+            call s:assert.skip('$JAVA_HOME is not exists.')
         endif
 
-        let l:paths= s:parser.parse({
+        let paths= s:parser.parse({
         \   'libs': [
         \       {
         \           'path': 'jre/lib/rt.jar',
@@ -25,12 +28,12 @@ describe 'javaclasspath#parser#standard.parse()'
         \   ],
         \})
 
-        Expect l:paths == [{'kind': 'lib', 'path': globpath($JAVA_HOME, 'jre/lib/rt.jar')}]
-    end
+        call s:assert.equals(paths, [{'kind': 'lib', 'path': globpath($JAVA_HOME, 'jre/lib/rt.jar')}])
+    endfunction
 
-    it 'return fully filename via arguments'
+    function! parse_suite.returns_fully_filename_via_arguments()
         let $JAVA_HOME= ''
-        let l:paths= s:parser.parse({
+        let paths= s:parser.parse({
         \   'java_home': s:save_java_home,
         \   'libs': [
         \       {
@@ -40,19 +43,13 @@ describe 'javaclasspath#parser#standard.parse()'
         \})
         let $JAVA_HOME= s:save_java_home
 
-        Expect l:paths == [{'kind': 'lib', 'path': globpath($JAVA_HOME, 'jre/lib/rt.jar')}]
-    end
+        call s:assert.equals(paths, [{'kind': 'lib', 'path': globpath($JAVA_HOME, 'jre/lib/rt.jar')}])
+    endfunction
 
-    it 'return empty list when arguments not passed'
-        let l:paths= s:parser.parse({
+    function! parse_suite.returns_empty_list_when_no_arguments_is_given()
+        call s:assert.equals([], s:parser.parse({
         \   'libs': [],
-        \})
-
-        Expect l:paths == []
-
-        let l:paths= s:parser.parse({
-        \})
-
-        Expect l:paths == []
-    end
-end
+        \}))
+        call s:assert.equals([], s:parser.parse({}))
+    endfunction
+endfunction

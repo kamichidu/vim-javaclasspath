@@ -1,17 +1,19 @@
-set runtimepath+=./.vim-test/*
-filetype plugin indent on
+let s:suite= themis#suite('variable parser')
+let s:assert= themis#helper('assert')
 
-describe 'javaclasspath#parser#variable.parse()'
-    before
-        let s:parser= javaclasspath#parser#variable#define()
-    end
+function! s:suite.before_each()
+    let s:parser= javaclasspath#parser#variable#define()
+endfunction
 
-    after
-        unlet s:parser
-    end
+function! s:suite.after_each()
+    unlet s:parser
+endfunction
 
-    it 'return paths directly'
-        let l:paths= s:parser.parse({
+function! s:suite.__parse__()
+    let parse_suite= themis#suite('parse()')
+
+    function! parse_suite.returns_paths_directly()
+        let paths= s:parser.parse({
         \   'paths': [
         \       {
         \           'kind': 'lib',
@@ -24,7 +26,7 @@ describe 'javaclasspath#parser#variable.parse()'
         \   ],
         \})
 
-        Expect l:paths == [
+        call s:assert.equals(paths, [
         \   {
         \       'kind': 'lib',
         \       'path': 'path/to/jar',
@@ -33,16 +35,11 @@ describe 'javaclasspath#parser#variable.parse()'
         \       'kind': 'src',
         \       'path': 'path/to/srcdir',
         \   },
-        \]
-    end
+        \])
+    endfunction
 
-    it 'return empty list when arguments not passed'
-        let l:paths= s:parser.parse({})
-
-        Expect l:paths == []
-
-        let l:paths= s:parser.parse({'paths': []})
-
-        Expect l:paths == []
-    end
-end
+    function! parse_suite.returns_empty_list_when_no_arguments_is_given()
+        call s:assert.equals(s:parser.parse({}), [])
+        call s:assert.equals(s:parser.parse({'paths': []}), [])
+    endfunction
+endfunction

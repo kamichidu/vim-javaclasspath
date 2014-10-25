@@ -1,25 +1,29 @@
-set runtimepath+=./.vim-test/*
-filetype plugin indent on
+let s:suite= themis#suite('eclipse parser')
+let s:assert= themis#helper('assert')
+call themis#helper('command')
 
-describe 'javaclasspath#parser#eclipse.parse()'
-    before
-        let s:parser= javaclasspath#parser#eclipse#define()
-        let s:save_cwd= getcwd()
-    end
+function! s:suite.before_each()
+    let s:parser= javaclasspath#parser#eclipse#define()
+    let s:save_cwd= getcwd()
+endfunction
 
-    after
-        execute 'cd' s:save_cwd
-        unlet s:save_cwd
-        unlet s:parser
-    end
+function! s:suite.after_each()
+    execute 'cd' s:save_cwd
+    unlet s:save_cwd
+    unlet s:parser
+endfunction
 
-    it 'return lib and src paths from .classpath'
+function! s:suite.__parse__()
+    let parse_suite= themis#suite('parse()')
+
+    function! parse_suite.returns_lib_and_src_paths()
         cd t/conf-ex/
-        let l:paths= s:parser.parse({
+
+        let paths= s:parser.parse({
         \   'filename': '.classpath',
         \})
 
-        Expect l:paths == [
+        call s:assert.equals(paths, [
         \   {
         \       'kind': 'src',
         \       'path': 'src',
@@ -48,19 +52,20 @@ describe 'javaclasspath#parser#eclipse.parse()'
         \       'kind': 'lib',
         \       'path': 'build/lib/hibernate-tools-4.0.0.jar',
         \   },
-        \]
-    end
+        \])
+    endfunction
 
-    it 'return lib and src and var paths from .classpath'
+    function! parse_suite.returns_lib_and_src_and_var_paths()
         cd t/conf-ex/
-        let l:paths= s:parser.parse({
+
+        let paths= s:parser.parse({
         \   'filename': '.classpath',
         \   'vars': {
         \       'ECLIPSE_HOME': 'eclipse-home',
         \   },
         \})
 
-        Expect l:paths == [
+        call s:assert.equals(paths, [
         \   {
         \       'kind': 'src',
         \       'path': 'src',
@@ -113,23 +118,16 @@ describe 'javaclasspath#parser#eclipse.parse()'
         \       'kind': 'lib',
         \       'path': 'build/lib/hibernate-tools-4.0.0.jar',
         \   },
-        \]
-    end
+        \])
+    endfunction
 
-    it 'return empty list when file not found'
+    function! parse_suite.returns_empty_list_when_file_not_found()
         cd t/conf-ex/
-        let l:paths= s:parser.parse({
+
+        let paths= s:parser.parse({
         \   'filename': 'teketo',
         \})
 
-        Expect l:paths == []
-    end
-
-    it 'throw when not passed filename key'
-        cd t/conf-ex/
-
-        let g:parser= s:parser
-        Expect expr { g:parser.parse({}) } to_throw
-        unlet g:parser
-    end
-end
+        call s:assert.equals(paths, [])
+    endfunction
+endfunction

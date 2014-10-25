@@ -12,6 +12,9 @@ if ! [ -d .vim-test/ ]; then
     mkdir .vim-test/
     git clone https://github.com/kamichidu/vim-javalang.git .vim-test/vim-javalang/
 fi
+if ! [ -d .vim-themis ]; then
+    git clone https://github.com/thinca/vim-themis .vim-themis/
+fi
 ...
-    sh 'bundle exec vim-flavor test'
+    sh '.vim-themis/bin/themis --runtimepath .vim-test/vim-javalang/'
 end
