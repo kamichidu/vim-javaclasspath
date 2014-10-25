@@ -1,4 +1,4 @@
-*vim-javaclasspath.txt*                  give path information to other plugin
+*vim-javaclasspath.txt*			 Give path information to other plugin
 
 Version:     0.0.2
 Author:      kamichidu <c.kamunagi@gmail.com>
@@ -25,29 +25,29 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
-CONTENTS                                              *javaclasspath-contents*
+CONTENTS					      *javaclasspath-contents*
 
-Abstract                                              |javaclasspath-abstract|
-Configuration                                    |javaclasspath-configuration|
-    How to Configure
-    Priority
-Interface                                            |javaclasspath-interface|
-    API
-    Example
-Parser Module                                    |javaclasspath-parser-module|
-    Abstract
-    Specification
-        API
-        Behaviour
-Built-in Parsers                               |javaclasspath-builtin-parsers|
-Acknowledgement                                |javaclasspath-acknowledgement|
+Abstract					      |javaclasspath-abstract|
+Configuration					 |javaclasspath-configuration|
+	How to Configure
+	Priority
+Interface					     |javaclasspath-interface|
+	API
+	Example
+Parser Module					 |javaclasspath-parser-module|
+	Abstract
+	Specification
+		API
+		Behaviour
+Built-in Parsers			       |javaclasspath-builtin-parsers|
+Acknowledgement				       |javaclasspath-acknowledgement|
 
 ==============================================================================
-ABSTRACT                                              *javaclasspath-abstract*
+ABSTRACT					      *javaclasspath-abstract*
 
-*vim-javaclasspath* is a plugin to give classpath information. this is for
+*vim-javaclasspath* is a plugin to give classpath information. This is for
 developping plugin which using jvm.
-this aim to give a common way to cofigure some plugin which is using jvm
+This aim to give a common way to cofigure some plugin which is using jvm
 (java, scala, et al.).
 
 Prequirements ~
@@ -55,208 +55,210 @@ Prequirements ~
 * |vim-javalang| - https://github.com/kamichidu/vim-javalang
 
 ==============================================================================
-CONFIGURATION                                    *javaclasspath-configuration*
+CONFIGURATION					 *javaclasspath-configuration*
 
-this section describe configuration way.
+This section describe configuration way.
 
 How to Configure ~
-                                                      *g:javaclasspath_config*
+						      *g:javaclasspath_config*
 g:javaclasspath_config
-    this is |Dictionary| type. each key is a parser name.
-    (see |javaclasspath-parser-module|)
-    a parser enabled only if |g:javaclasspath_config| or
-    |b:javaclasspath_config| has its name.
+	This is |Dictionary| type. Each key is a parser name.
+	(See |javaclasspath-parser-module|)
+	A parser enabled only if |g:javaclasspath_config| or
+	|b:javaclasspath_config| has its name.
 
-    |vim-javaclasspath| define to |g:javaclasspath_config| has a key which is
-    a parser name, but each values are related its key is defined by each
-    parser module.
-                                                      *b:javaclasspath_config*
+	|vim-javaclasspath| define to |g:javaclasspath_config| has a key which
+	is a parser name, but each values are related its key is defined by
+	each parser module.
+
+						      *b:javaclasspath_config*
 b:javaclasspath_config
-    similar to |g:javaclasspath_config| except evaluation priority.
-    |b:javaclasspath_config| has higher priority than |g:javaclasspath_config|
-    if exists.
+	Similar to |g:javaclasspath_config| except evaluation priority.
+	|b:javaclasspath_config| has higher priority than
+	|g:javaclasspath_config| if exists.
 
 Priority ~
 
-let know evaluation priority.
+Let know evaluation priority.
 
-    |b:javaclasspath_config| > |g:javaclasspath_config|
+	|b:javaclasspath_config| > |g:javaclasspath_config|
 
 ==============================================================================
-INTERFACE                                            *javaclasspath-interface*
+INTERFACE					     *javaclasspath-interface*
 
-this section describe interfaces |vim-javaclasspath| has.
+This section describe interfaces |vim-javaclasspath| has.
 
 API ~
-                                                         *javaclasspath#get()*
+							 *javaclasspath#get()*
 javaclasspath#get()
-    returns a |Dictionary| which has some |Dictionary-function|s below.
+	Returns a |Dictionary| which has some |Dictionary-function|s below.
 
-    parse()
+	parse()
 
-    classpath()
-        returns a |String| which is joined using
-        |javalang-constants-separator|.
+	classpath()
+		Returns a |String| which is joined using
+		|javalang-constants-separator|.
 
-    source_path()
-        returns a |String| which is joined using
-        |javalang-constants-separator|.
+	source_path()
+		Returns a |String| which is joined using
+		|javalang-constants-separator|.
 
-                                                   *javaclasspath#classpath()*
+						   *javaclasspath#classpath()*
 javaclasspath#classpath()
-    equivalent of below:
+	Equivalent to below:
 >
-    javaclasspath#get().classpath()
+	javaclasspath#get().classpath()
 <
 
-                                                 *javaclasspath#source_path()*
+						 *javaclasspath#source_path()*
 javaclasspath#source_path()
-    equivalent of below:
+	Equivalent to below:
 >
-    javaclasspath#get().source_path()
+	javaclasspath#get().source_path()
 <
 
 Example ~
 >
-    let b:javaclasspath_config= {
-    \   'variable': {
-    \       'paths': [
-    \           {
-    \               'kind': 'lib',
-    \               'path': '/hoge/fuga/piyo.jar',
-    \           },
-    \           {
-    \               'kind': 'src',
-    \               'path': './src/main/java/',
-    \           },
-    \           {
-    \               'kind': 'lib',
-    \               'path': '/hoge/fuga.jar',
-    \           },
-    \           {
-    \               'kind': 'src',
-    \               'path': './src/test/java/',
-    \           },
-    \       ],
-    \   },
-    \}
+	let b:javaclasspath_config= {
+	\   'variable': {
+	\	'paths': [
+	\	    {
+	\		'kind': 'lib',
+	\		'path': '/hoge/fuga/piyo.jar',
+	\	    },
+	\	    {
+	\		'kind': 'src',
+	\		'path': './src/main/java/',
+	\	    },
+	\	    {
+	\		'kind': 'lib',
+	\		'path': '/hoge/fuga.jar',
+	\	    },
+	\	    {
+	\		'kind': 'src',
+	\		'path': './src/test/java/',
+	\	    },
+	\	],
+	\   },
+	\}
 
-    let jc= javaclasspath#get()
+	let jc= javaclasspath#get()
 
-    " => same to b:javaclasspath_config.variable.paths
-    echo jc.parse()
-    " => /hoge/fuga/piyo.jar:/hoge/fuga.jar
-    echo jc.classpath()
+	" => same to b:javaclasspath_config.variable.paths
+	echo jc.parse()
+	" => /hoge/fuga/piyo.jar:/hoge/fuga.jar
+	echo jc.classpath()
 
-    " => ./src/main/java/:./src/test/java/
-    echo jc.source_path()
+	" => ./src/main/java/:./src/test/java/
+	echo jc.source_path()
 <
 
 ==============================================================================
-PARSER MODULE                                    *javaclasspath-parser-module*
+PARSER MODULE					 *javaclasspath-parser-module*
 
-this section describe |javaclasspath-parser-module| specification.
+This section describe |javaclasspath-parser-module| specification.
 
 Abstract ~
 
-parser module is used to absorb format differences.
+Parser Module is used to absorb format differences.
 
 Specification ~
 
-each parser have some functions below.
+Each parser have some functions below.
 
 javaclasspath#parser#{name}#define()
-    returns |Dictionary| which is parser object. returning |Dictionary| has
-    some functions below.
+	Returns |Dictionary| which is parser object. Returning |Dictionary|
+	has some functions below.
 
-    {parser}.parse({config})
-        returns |List| has |Dictionary| elements. each |Dictionary| has keys
-        below.
+	{parser}.parse({config})
+		Returns |List| has |Dictionary| elements. Each |Dictionary|
+		has keys below.
 
-        - kind (required)
-            one of these |String|
-                - lib (a classpath)
-                - src (a source path)
+		- kind (Required)
+			One of these |String|
 
-        - path (required)
-            filename or directory path
+			- lib (a classpath)
+			- src (a source path)
 
-        - javadoc (optional)
-            url or file/directory path
+		- path (Required)
+			Filename or directory path
 
-        - sourcepath (optional)
-            filename or directory which is attached.
+		- javadoc (Optional)
+			URL or file/directory path
+
+		- sourcepath (Optional)
+			Filename or directory which is attached.
 
 ==============================================================================
-BUILT-IN PARSERS                               *javaclasspath-builtin-parsers*
+BUILT-IN PARSERS			       *javaclasspath-builtin-parsers*
 
 standard
-    this parser recognize some paths by $JAVA_HOME or |String| related
-    java_home key.
+	This parser recognize some paths by $JAVA_HOME or |String| related
+	java_home key.
 
-    - libs      |List| of |Dictionary| (required)
-      - path    |String| (required)
-      - javadoc |String| (optional)
-    - java_home |String| (optional)
+	- libs	|List| of |Dictionary| (Required)
+		- path	|String| (Required)
+		- javadoc |String| (Optional)
+		- java_home |String| (Optional)
 >
-    let g:javaclasspath_config= {
-    \   'standard': {
-    \       'java_home': 'path/to/java_home',
-    \       'libs':      [
-    \           {
-    \               'path': 'jre/lib/rt.jar',
-    \           },
-    \       ],
-    \   },
-    \}
+	let g:javaclasspath_config= {
+	\   'standard': {
+	\	'java_home': 'path/to/java_home',
+	\	'libs': [
+	\	    {
+	\		'path': 'jre/lib/rt.jar',
+	\	    },
+	\	],
+	\   },
+	\}
 <
 variable
-    this parser recognize configured |Dictionary| value. its specification is
-    same to parse() returned.
-    see |javaclasspath-parser-module| for configuration.
+	This parser recognize configured |Dictionary| value. Its specification
+	is same to parse() returned. See |javaclasspath-parser-module| for
+	configuration.
 
-    - paths |List| of |Dictionary| (required)
+	- paths |List| of |Dictionary| (Required)
 >
-    let g:javaclasspath_config= {
-    \   'variable': {
-    \       'paths': [
-    \           {
-    \               'kind': 'lib',
-    \               'path': 'path/to/jar',
-    \           },
-    \       ],
-    \   },
-    \}
+	let g:javaclasspath_config= {
+	\   'variable': {
+	\	'paths': [
+	\	    {
+	\		'kind': 'lib',
+	\		'path': 'path/to/jar',
+	\	    },
+	\	],
+	\   },
+	\}
 <
 eclipse
-    this parser recognize eclipse's .classpath configuration file.
+	This parser recognize eclipse's .classpath configuration file.
 
-    - filename |String|     (required)
-    - vars     |Dictionary| (optional)
+	- filename |String|     (Required)
+	- vars     |Dictionary| (Optional)
 >
-    let g:javaclasspath_config= {
-    \   'eclipse': {
-    \       'filename': '.classpath',
-    \       'vars': {
-    \           'ECLIPSE_HOME': 'path/to/eclipse/home',
-    \       },
-    \   },
-    \}
+	let g:javaclasspath_config= {
+	\   'eclipse': {
+	\	'filename': '.classpath',
+	\	'vars': {
+	\	    'ECLIPSE_HOME': 'path/to/eclipse/home',
+	\	},
+	\   },
+	\}
 <
 sbt
-    this parser recognize sbt's build definition file.
+	This parser recognize sbt's build definition file.
 
-    - filename |String| (required)
+	- filename |String| (Required)
 >
-    let g:javaclasspath_config= {
-    \   'sbt': {
-    \       'filename': 'build.sbt',
-    \   },
-    \}
+	let g:javaclasspath_config= {
+	\   'sbt': {
+	\	'filename': 'build.sbt',
+	\   },
+	\}
 <
 
 ==============================================================================
-ACKNOWLEDGEMENT                                *javaclasspath-acknowledgement*
+ACKNOWLEDGEMENT				       *javaclasspath-acknowledgement*
 
 * raa0121
 
