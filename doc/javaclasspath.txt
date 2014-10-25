@@ -2,7 +2,7 @@
 
 Version:     0.0.1
 Author:      kamichidu <c.kamunagi@gmail.com>
-Last Change: 24-Oct-2014.
+Last Change: 25-Oct-2014.
 License:     The MIT License (MIT)
 
 Copyright (c) 2014 kamichidu
@@ -102,6 +102,20 @@ javaclasspath#get()
         returns a |String| which is joined using
         |javalang-constants-separator|.
 
+                                                   *javaclasspath#classpath()*
+javaclasspath#classpath()
+    equivalent of below:
+>
+    javaclasspath#get().classpath()
+<
+
+                                                 *javaclasspath#source_path()*
+javaclasspath#source_path()
+    equivalent of below:
+>
+    javaclasspath#get().source_path()
+<
+
 Example ~
 >
     let b:javaclasspath_config= {
@@ -168,7 +182,7 @@ javaclasspath#parser#{name}#define()
             filename or directory path
 
         - javadoc (optional)
-            url or directory path
+            url or file/directory path
 
         - sourcepath (optional)
             filename or directory which is attached.
