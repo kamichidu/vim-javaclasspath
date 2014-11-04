@@ -27,9 +27,9 @@ set cpo&vim
 let s:V= vital#of('javaclasspath')
 let s:P= s:V.import('Process')
 let s:XML= s:V.import('Web.XML')
+let s:JLang= s:V.import('Java.Lang')
 unlet s:V
 
-let s:jlang= javalang#get()
 let s:epom_mem= {}
 let s:cp_mem= {}
 
@@ -100,7 +100,7 @@ function! s:obj.parse(config)
     endfor
 
     " collect classpath
-    let classpaths= split(join(readfile(cp_path), ''), s:jlang.constants.path_separator)
+    let classpaths= split(join(readfile(cp_path), ''), s:JLang.path_separator)
     for classpath in classpaths
         let entry= {'kind': 'lib', 'path': classpath}
         let javadoc_path= substitute(classpath, '\.jar$', '-javadoc.jar', '')

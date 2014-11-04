@@ -26,9 +26,9 @@ set cpo&vim
 
 let s:V= vital#of('javaclasspath')
 let s:M= s:V.import('Vim.Message')
+let s:JLang= s:V.import('Java.Lang')
 unlet s:V
 
-let s:jlang= javalang#get()
 let s:helper= javaclasspath#helper#get()
 
 let s:obj= {
@@ -43,7 +43,7 @@ function! s:obj.classpath()
     let paths= self.parse()
     let classpaths= filter(paths, 'v:val.kind ==# "lib"')
 
-    return join(map(classpaths, 'v:val.path'), s:jlang.constants.path_separator)
+    return join(map(classpaths, 'v:val.path'), s:JLang.path_separator)
 endfunction
 
 "
@@ -53,7 +53,7 @@ function! s:obj.source_path()
     let paths= self.parse()
     let sourcepaths= filter(paths, 'v:val.kind ==# "src"')
 
-    return join(map(sourcepaths, 'v:val.path'), s:jlang.constants.path_separator)
+    return join(map(sourcepaths, 'v:val.path'), s:JLang.path_separator)
 endfunction
 
 "

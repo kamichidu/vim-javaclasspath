@@ -2,7 +2,7 @@
 
 Version:     0.0.3
 Author:      kamichidu <c.kamunagi@gmail.com>
-Last Change: 04-Nov-2014.
+Last Change: 05-Nov-2014.
 License:     The MIT License (MIT)
 
 Copyright (c) 2014 kamichidu
@@ -49,10 +49,6 @@ ABSTRACT					      *javaclasspath-abstract*
 developping plugin which using jvm.
 This aim to give a common way to cofigure some plugin which is using jvm
 (java, scala, et al.).
-
-Prequirements ~
-
-* |vim-javalang| - https://github.com/kamichidu/vim-javalang
 
 ==============================================================================
 CONFIGURATION					 *javaclasspath-configuration*

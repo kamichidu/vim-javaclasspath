@@ -7,10 +7,6 @@ Abstract
 vim-javaclasspath is a plugin to give classpath information. this is for developping plugin which using jvm.
 this aim to give a common way to cofigure some plugin which is using jvm (java, scala, et al.).
 
-### Prequirements
-
-* [vim-javalang](https://github.com/kamichidu/vim-javalang)
-
 Installation
 ----------------------------------------------------------------------------------------------------
 
@@ -19,9 +15,7 @@ Installation
     write below to your `$MYVIMRC`
 
     ```vim:
-    NeoBundle 'kamichidu/vim-javaclasspath', {
-    \   'depends': ['kamichidu/vim-javalang'],
-    \}
+    NeoBundle 'kamichidu/vim-javaclasspath'
 
     NeoBundleCheck
     ```
