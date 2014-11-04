@@ -51,6 +51,8 @@ let g:javaclasspath_config= {
 \   },
 \}
 
+let g:javaclasspath_enable_auto_analyze= get(g:, 'javaclasspath_enable_auto_analyze', 0)
+
 augroup javaclasspath-event-handler
     autocmd!
     autocmd FileType * call javaclasspath#on_filetype()

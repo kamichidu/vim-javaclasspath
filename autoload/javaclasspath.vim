@@ -130,6 +130,10 @@ function! javaclasspath#get()
 endfunction
 
 function! javaclasspath#on_filetype()
+    if !g:javaclasspath_enable_auto_analyze
+        return
+    endif
+
     if exists('s:on_filetype_parsers')
         for parser_name in s:on_filetype_parsers
             try
