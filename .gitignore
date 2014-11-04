@@ -3,3 +3,4 @@
 .vim-test/
 *.lock
 .vim-themis/
+.deps/
