@@ -161,7 +161,7 @@ function! s:generate_effective_pom(config)
     \   printf('>"%s"', mem.stdout),
     \   printf('2>"%s"', mem.stderr),
     \])
-    call s:P.spawn(command)
+    call javaclasspath#util#spawn(command)
 endfunction
 
 function! s:build_classpath(config)
@@ -192,7 +192,7 @@ function! s:build_classpath(config)
     \   printf('>"%s"', mem.stdout),
     \   printf('2>"%s"', mem.stderr),
     \])
-    call s:P.spawn(command)
+    call javaclasspath#util#spawn(command)
 endfunction
 
 let &cpo= s:save_cpo
