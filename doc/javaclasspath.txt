@@ -2,7 +2,7 @@
 
 Version:     0.0.2
 Author:      kamichidu <c.kamunagi@gmail.com>
-Last Change: 25-Oct-2014.
+Last Change: 04-Nov-2014.
 License:     The MIT License (MIT)
 
 Copyright (c) 2014 kamichidu
@@ -82,6 +82,11 @@ Priority ~
 Let know evaluation priority.
 
 	|b:javaclasspath_config| > |g:javaclasspath_config|
+
+					 *g:javaclasspath_enable_auto_analyze*
+g:javaclasspath_enable_auto_analyze
+	This is |Number| type (1/0). If value is 1, enable to auto-analyze
+	when |'filetype'| is "java".
 
 ==============================================================================
 INTERFACE					     *javaclasspath-interface*
@@ -293,4 +298,4 @@ ACKNOWLEDGEMENT				       *javaclasspath-acknowledgement*
     * sbt parser
 
 ==============================================================================
-vim:tw=78:ts=4:ft=help:norl:fen:
+vim:tw=78:ts=8:ft=help:norl:fen:
