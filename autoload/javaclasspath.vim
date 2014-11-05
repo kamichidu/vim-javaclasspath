@@ -30,11 +30,10 @@ let s:JLang= s:V.import('Java.Lang')
 unlet s:V
 
 let s:helper= javaclasspath#helper#get()
+let s:parsers= {}
 
-let s:obj= {
-\   '_parsers': [],
-\   '_config': {},
-\}
+
+let s:obj= {}
 
 "
 " return joined classpaths.
@@ -67,7 +66,7 @@ endfunction
 function! s:obj.parse()
     let classpaths= []
 
-    for parser in self._parsers
+    for parser in javaclasspath#get_parsers()
         try
             let config= self.config(parser)
 
@@ -83,19 +82,19 @@ function! s:obj.parse()
 endfunction
 
 function! s:obj.config(parser)
-    if exists('b:javaclasspath_config') && has_key(b:javaclasspath_config, a:parser.name)
-        let config= b:javaclasspath_config[a:parser.name]
-    else
-        let config= self._config[a:parser.name]
+    let config= javaclasspath#get_config()
+    if !has_key(config, a:parser.name)
+        throw 'javaclasspath: Illegal state!'
     endif
+    let parser_config= config[a:parser.name]
 
     " validate if enabled argument validation
     if has_key(a:parser, 'config')
         let validator= s:helper.arguments(a:parser.config)
 
-        return validator.apply(config)
+        return validator.apply(parser_config)
     else
-        return config
+        return parser_config
     endif
 endfunction
 
@@ -118,15 +117,7 @@ endfunction
 "       see each parser's documentation for more details.
 "
 function! javaclasspath#get()
-    let obj= deepcopy(s:obj)
-
-    let obj._config= deepcopy(g:javaclasspath_config)
-
-    for format in keys(obj._config)
-        call add(obj._parsers, javaclasspath#parser#{format}#define())
-    endfor
-
-    return obj
+    return deepcopy(s:obj)
 endfunction
 
 function! javaclasspath#on_filetype()
@@ -167,6 +158,30 @@ function! javaclasspath#on_filetype()
                 call s:M.error(v:throwpoint)
             endtry
         endfor
+    endif
+endfunction
+
+" XXX: visible for test
+function! javaclasspath#get_parsers()
+    let config= javaclasspath#get_config()
+    let parsers= []
+    for format in keys(config)
+        if has_key(s:parsers, format)
+            let parsers+= [deepcopy(s:parsers[format])]
+        else
+            let s:parsers[format]= javaclasspath#parser#{format}#define()
+            let parsers+= [deepcopy(s:parsers[format])]
+        endif
+    endfor
+    return parsers
+endfunction
+
+" XXX: visible for test
+function! javaclasspath#get_config()
+    if exists('b:javaclasspath_config')
+        return deepcopy(b:javaclasspath_config)
+    else
+        return deepcopy(g:javaclasspath_config)
     endif
 endfunction
 
