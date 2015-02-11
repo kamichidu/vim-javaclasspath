@@ -55,6 +55,7 @@ function! javaclasspath#util#spawn(expr, ...)
     if s:is_windows
       let &l:shellslash = shellslash
     endif
+    redraw!
   endtry
   return ''
 endfunction
