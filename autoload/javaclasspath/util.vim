@@ -60,5 +60,9 @@ function! javaclasspath#util#spawn(expr, ...)
   return ''
 endfunction
 
+function! javaclasspath#util#safe_filename(name) abort
+    return substitute(a:name, '[:;*?"<>|/\\%]', '\=printf("%%%02x", char2nr(submatch(0)))', 'g')
+endfunction
+
 let &cpo= s:save_cpo
 unlet s:save_cpo
