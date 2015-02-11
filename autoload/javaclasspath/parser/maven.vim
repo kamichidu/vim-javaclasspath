@@ -30,8 +30,12 @@ let s:XML= s:V.import('Web.XML')
 let s:JLang= s:V.import('Java.Lang')
 unlet s:V
 
-let s:epom_mem= {}
-let s:cp_mem= {}
+" cache file structure
+"
+" - pom
+"   - mtime
+"   - filepath
+" - cache
 
 let s:obj= {
 \   'name': 'maven',
@@ -48,19 +52,31 @@ function! s:obj.parse(config)
         return []
     endif
     let pom_file= fnamemodify(a:config.filename, ':p')
-    if !has_key(s:cp_mem, pom_file)
-        call s:build_classpath(a:config)
+    let storage= javaclasspath#storage#new(pom_file)
+
+    let mtime= getftime(pom_file)
+    if storage.has('pom')
+        let pom_info= storage.get('pom')
+        call vimconsole#log(pom_info)
+        call vimconsole#log(mtime)
+        if pom_info.mtime >= mtime
+            return pom_info.cache
+        endif
     endif
-    if !has_key(s:epom_mem, pom_file)
-        call s:generate_effective_pom(a:config)
-    endif
-    let cp_path= s:cp_mem[pom_file].cp_path
-    let epom_path= s:epom_mem[pom_file].epom_path
+
+    call s:build_classpath(a:config)
+    call s:generate_effective_pom(a:config)
+
+    call storage.load()
+
+    let cp_path= storage.get('cp').cp_path
+    let epom_path= storage.get('epom').epom_path
 
     while !filereadable(cp_path) || !exists('epom_dom')
         try
             let epom_dom= s:XML.parseFile(epom_path)
         catch
+            sleep 10 m
         endtry
     endwhile
 
@@ -116,6 +132,12 @@ function! s:obj.parse(config)
         let paths+= [entry]
     endfor
 
+    call storage.set('pom', {
+    \   'mtime': mtime,
+    \   'cache': paths,
+    \})
+    call storage.persist()
+
     return paths
 endfunction
 
@@ -135,64 +157,56 @@ endfunction
 
 function! s:generate_effective_pom(config)
     let pom_file= fnamemodify(a:config.filename, ':p')
-    let last_mod_time= getftime(pom_file)
-    let mem= get(s:epom_mem, pom_file, {})
+    let storage= javaclasspath#storage#new(pom_file)
+    let mem= storage.get('epom', {})
 
-    if get(mem, 'last_mod_time', 0) >= last_mod_time
-        " not modified
+    let mtime= getftime(pom_file)
+    if has_key(mem, 'mtime') && mem.mtime >= mtime
         return
     endif
-    " remove old file
-    if has_key(mem, 'epom_path') && filereadable(mem.epom_path)
-        call delete(mem.epom_path)
-    endif
-    " modified
-    let mem.last_mod_time= last_mod_time
+    let mem.mtime= mtime
     let mem.epom_path= tempname()
     let mem.stdout= tempname()
     let mem.stderr= tempname()
-    let s:epom_mem[pom_file]= mem
 
-    let command= join([
+    call storage.set('epom', mem)
+    call storage.persist()
+
+    call javaclasspath#util#spawn(join([
     \   'mvn',
     \   printf('--file "%s"', pom_file),
     \   'help:effective-pom',
     \   printf('-Doutput="%s"', mem.epom_path),
     \   printf('>"%s"', mem.stdout),
     \   printf('2>"%s"', mem.stderr),
-    \])
-    call javaclasspath#util#spawn(command)
+    \]))
 endfunction
 
 function! s:build_classpath(config)
     let pom_file= fnamemodify(a:config.filename, ':p')
-    let last_mod_time= getftime(pom_file)
-    let mem= get(s:cp_mem, pom_file, {})
+    let storage= javaclasspath#storage#new(pom_file)
+    let mem= storage.get('cp', {})
 
-    if get(mem, 'last_mod_time', 0) >= last_mod_time
-        " not modified
+    let mtime= getftime(pom_file)
+    if has_key(mem, 'mtime') && mem.mtime >= mtime
         return
     endif
-    " remove old file
-    if has_key(mem, 'cp_path') && filereadable(mem.cp_path)
-        call delete(mem.cp_path)
-    endif
-    " modified
-    let mem.last_mod_time= last_mod_time
+    let mem.mtime= mtime
     let mem.cp_path= tempname()
     let mem.stdout= tempname()
     let mem.stderr= tempname()
-    let s:cp_mem[pom_file]= mem
 
-    let command= join([
+    call storage.set('cp', mem)
+    call storage.persist()
+
+    call javaclasspath#util#spawn(join([
     \   'mvn',
     \   printf('--file "%s"', pom_file),
     \   'dependency:build-classpath',
     \   printf('-Dmdep.outputFile="%s"', mem.cp_path),
     \   printf('>"%s"', mem.stdout),
     \   printf('2>"%s"', mem.stderr),
-    \])
-    call javaclasspath#util#spawn(command)
+    \]))
 endfunction
 
 let &cpo= s:save_cpo
