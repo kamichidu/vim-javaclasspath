@@ -1,8 +1,8 @@
 *vim-javaclasspath.txt*			 Give path information to other plugin
 
-Version:     0.1.0
+Version:     0.1.1
 Author:      kamichidu <c.kamunagi@gmail.com>
-Last Change: 02-Dec-2014.
+Last Change: 11-Feb-2015.
 License:     The MIT License (MIT)
 
 Copyright (c) 2014 kamichidu
@@ -83,6 +83,11 @@ Let know evaluation priority.
 g:javaclasspath_enable_auto_analyze
 	This is |Number| type (1/0). If value is 1, enable to auto-analyze
 	when |'filetype'| is "java".
+
+						    *g:javaclasspath_data_dir*
+g:javaclasspath_data_dir
+	This is a path is used for |javaclasspath|'s internal process.
+	(Default: "$HOME/.javaclasspath/")
 
 ==============================================================================
 INTERFACE					     *javaclasspath-interface*
