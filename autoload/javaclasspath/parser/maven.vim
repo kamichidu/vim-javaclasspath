@@ -69,16 +69,22 @@ function! s:obj.parse(config)
 
     call storage.load()
 
-    let cp_path= storage.get('cp').cp_path
-    let epom_path= storage.get('epom').epom_path
-
-    while !filereadable(cp_path) || !exists('epom_dom')
-        try
-            let epom_dom= s:XML.parseFile(epom_path)
-        catch
-            sleep 10 m
-        endtry
+    " wait
+    let epom_memo= storage.get('epom')
+    while !storage.has('epom_status')
+        let status= s:status(epom_memo.stdout, epom_memo.stderr)
+        if status !=# ''
+            call storage.set('epom_status', status)
+            call storage.persist()
+            break
+        endif
+        sleep 10 m
+        call storage.load()
     endwhile
+    if storage.get('epom_status') ==# 'FAILURE'
+        return []
+    endif
+    let epom_dom= s:XML.parseFile(epom_memo.epom_path)
 
     let paths= []
     " collect sourcepath
@@ -115,8 +121,23 @@ function! s:obj.parse(config)
         endif
     endfor
 
+    let cp_memo= storage.get('cp')
+    while !storage.has('cp_status')
+        let status= s:status(cp_memo.stdout, cp_memo.stderr)
+        if status !=# ''
+            call storage.set('cp_status', status)
+            call storage.persist()
+            break
+        endif
+        sleep 10 m
+        call storage.load()
+    endwhile
+    if storage.get('cp_status') ==# 'FAILURE'
+        return []
+    endif
+
     " collect classpath
-    let classpaths= split(join(readfile(cp_path), ''), s:JLang.path_separator)
+    let classpaths= split(join(readfile(cp_memo.cp_path), ''), s:JLang.path_separator)
     for classpath in classpaths
         let entry= {'kind': 'lib', 'path': classpath}
         let javadoc_path= substitute(classpath, '\.jar$', '-javadoc.jar', '')
@@ -153,6 +174,21 @@ endfunction
 
 function! javaclasspath#parser#maven#define()
     return deepcopy(s:obj)
+endfunction
+
+function! s:status(stdoutfile, stderrfile)
+    " maven don't output stderr
+    if !filereadable(a:stdoutfile)
+        return ''
+    endif
+
+    let lines= readfile(a:stdoutfile)
+    for line in lines
+        if line =~# '\cBUILD\s\+\%(SUCCESS\|FAILURE\)'
+            return matchstr(line, '\cBUILD\s\+\zs\%(SUCCESS\|FAILURE\)\ze')
+        endif
+    endfor
+    return ''
 endfunction
 
 function! s:generate_effective_pom(config)
