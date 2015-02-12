@@ -41,6 +41,12 @@ function! javaclasspath#storage#set(key, value) dict abort
     let self.__data[a:key]= a:value
 endfunction
 
+function! javaclasspath#storage#remove(key) dict abort
+    if has_key(self.__data, a:key)
+        call remove(self.__data, a:key)
+    endif
+endfunction
+
 function! javaclasspath#storage#has(key) dict abort
     return has_key(self.__data, a:key)
 endfunction
@@ -77,6 +83,7 @@ function! javaclasspath#storage#new(seed) abort
     \   '__filepath': s:Path.join(s:storage_dirname, javaclasspath#util#safe_filename(a:seed)),
     \   'get': function('javaclasspath#storage#get'),
     \   'set': function('javaclasspath#storage#set'),
+    \   'remove': function('javaclasspath#storage#remove'),
     \   'has': function('javaclasspath#storage#has'),
     \   'load': function('javaclasspath#storage#load'),
     \   'persist': function('javaclasspath#storage#persist'),
