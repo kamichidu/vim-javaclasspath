@@ -28,6 +28,7 @@ let s:V= vital#of('javaclasspath')
 let s:P= s:V.import('Process')
 let s:XML= s:V.import('Web.XML')
 let s:JLang= s:V.import('Java.Lang')
+let s:Path= s:V.import('System.Filepath')
 unlet s:V
 
 " cache file structure
@@ -57,8 +58,6 @@ function! s:obj.parse(config)
     let mtime= getftime(pom_file)
     if storage.has('pom')
         let pom_info= storage.get('pom')
-        call vimconsole#log(pom_info)
-        call vimconsole#log(mtime)
         if pom_info.mtime >= mtime
             return pom_info.cache
         endif
@@ -197,15 +196,20 @@ function! s:generate_effective_pom(config)
     let mem= storage.get('epom', {})
 
     let mtime= getftime(pom_file)
-    if has_key(mem, 'mtime') && mem.mtime >= mtime
+    if has_key(mem, 'mtime') && mem.mtime >= mtime && storage.get('epom_status', '') ==# 'SUCCESS'
         return
     endif
     let mem.mtime= mtime
-    let mem.epom_path= tempname()
+    let mem.epom_path= s:Path.join(g:javaclasspath_data_dir, 'epom', javaclasspath#util#safe_filename(pom_file))
     let mem.stdout= tempname()
     let mem.stderr= tempname()
 
+    if !isdirectory(fnamemodify(mem.epom_path, ':h'))
+        call mkdir(fnamemodify(mem.epom_path, ':h'), 'p')
+    endif
+
     call storage.set('epom', mem)
+    call storage.remove('epom_status')
     call storage.persist()
 
     call javaclasspath#util#spawn(join([
@@ -215,7 +219,7 @@ function! s:generate_effective_pom(config)
     \   printf('-Doutput="%s"', mem.epom_path),
     \   printf('>"%s"', mem.stdout),
     \   printf('2>"%s"', mem.stderr),
-    \]))
+    \]), 1)
 endfunction
 
 function! s:build_classpath(config)
@@ -224,15 +228,20 @@ function! s:build_classpath(config)
     let mem= storage.get('cp', {})
 
     let mtime= getftime(pom_file)
-    if has_key(mem, 'mtime') && mem.mtime >= mtime
+    if has_key(mem, 'mtime') && mem.mtime >= mtime && storage.get('cp_status', '') ==# 'SUCCESS'
         return
     endif
     let mem.mtime= mtime
-    let mem.cp_path= tempname()
+    let mem.cp_path= s:Path.join(g:javaclasspath_data_dir, 'classpath', javaclasspath#util#safe_filename(pom_file))
     let mem.stdout= tempname()
     let mem.stderr= tempname()
 
+    if !isdirectory(fnamemodify(mem.cp_path, ':h'))
+        call mkdir(fnamemodify(mem.cp_path, ':h'), 'p')
+    endif
+
     call storage.set('cp', mem)
+    call storage.remove('cp_status')
     call storage.persist()
 
     call javaclasspath#util#spawn(join([
@@ -242,7 +251,7 @@ function! s:build_classpath(config)
     \   printf('-Dmdep.outputFile="%s"', mem.cp_path),
     \   printf('>"%s"', mem.stdout),
     \   printf('2>"%s"', mem.stderr),
-    \]))
+    \]), 1)
 endfunction
 
 let &cpo= s:save_cpo
