@@ -140,6 +140,12 @@ javaclasspath#source_path()
 	javaclasspath#get().source_path()
 <
 
+						   *javaclasspath#java_home()*
+javaclasspath#java_home()
+	It returns a jdk's home directory. You can access to the path which
+	standard parser will use it from |g:javaclasspath_config| or
+	|b:javaclasspath_config|.
+
 Example ~
 >
 	let b:javaclasspath_config= {

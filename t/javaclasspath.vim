@@ -106,3 +106,36 @@ function! s:suite.gets_source_path()
     call s:assert.is_string(source_path)
     call s:assert.same(source_path, 'fuga')
 endfunction
+
+function! s:suite.__java_home__()
+    let java_home= themis#suite('$JAVA_HOME')
+
+    function! java_home.gets_by_buffer_variable()
+        let g:javaclasspath_config= {
+        \   'standard': {
+        \       'java_home': 'HOGE'
+        \   },
+        \}
+        let b:javaclasspath_config= {
+        \   'standard': {
+        \       'java_home': 'hoge'
+        \   },
+        \}
+
+        call s:assert.same(javaclasspath#java_home(), 'hoge')
+    endfunction
+
+    function! java_home.gets_by_global_variable()
+        let g:javaclasspath_config= {
+        \   'standard': {
+        \       'java_home': 'HOGE'
+        \   },
+        \}
+
+        call s:assert.same(javaclasspath#java_home(), 'HOGE')
+    endfunction
+
+    function! java_home.gets_by_environment_variable()
+        call s:assert.same(javaclasspath#java_home(), $JAVA_HOME)
+    endfunction
+endfunction

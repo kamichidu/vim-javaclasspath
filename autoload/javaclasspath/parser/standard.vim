@@ -29,7 +29,7 @@ let s:obj= {
 \}
 
 function! s:obj.parse(config)
-    let l:base_dir= s:base_dir(a:config)
+    let l:base_dir= javaclasspath#parser#standard#java_home(a:config)
 
     if empty(l:base_dir)
         return []
@@ -57,7 +57,7 @@ function! s:obj.parse(config)
     return l:parsed
 endfunction
 
-function! s:base_dir(config)
+function! javaclasspath#parser#standard#java_home(config)
     if has_key(a:config, 'java_home')
         return a:config.java_home
     elseif exists('$JAVA_HOME')

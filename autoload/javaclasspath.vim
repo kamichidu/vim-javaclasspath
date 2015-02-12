@@ -106,6 +106,11 @@ function! javaclasspath#source_path()
     return javaclasspath#get().source_path()
 endfunction
 
+function! javaclasspath#java_home()
+    let config= javaclasspath#get_config()
+    return javaclasspath#parser#standard#java_home(get(config, 'standard', {}))
+endfunction
+
 "
 " get parser object to parse any format you like.
 "
