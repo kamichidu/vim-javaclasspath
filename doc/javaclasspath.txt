@@ -2,7 +2,7 @@
 
 Version:     0.1.1
 Author:      kamichidu <c.kamunagi@gmail.com>
-Last Change: 11-Feb-2015.
+Last Change: 12-Feb-2015.
 License:     The MIT License (MIT)
 
 Copyright (c) 2014 kamichidu
@@ -283,10 +283,12 @@ maven
 	This parser recognize pom.xml file.
 
 	- filename |String| (Required)
+	- command  |String| (Required)
 >
 	let g:javaclasspath_config= {
 	\   'maven': {
 	\	'filename': 'pom.xml',
+	\	'command': 'mvn',
 	\   },
 	\}
 <

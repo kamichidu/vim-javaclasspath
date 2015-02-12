@@ -45,6 +45,7 @@ let g:javaclasspath_config= {
 \   },
 \   'maven': {
 \       'filename': 'pom.xml',
+\       'command': 'mvn',
 \   },
 \   'variable': {
 \       'paths': [],

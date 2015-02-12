@@ -45,11 +45,15 @@ let s:obj= {
 \           'type':     type(''),
 \           'required': 1,
 \       },
+\       'command': {
+\           'type': type(''),
+\           'required': 1,
+\       },
 \   },
 \}
 
 function! s:obj.parse(config)
-    if !(filereadable(a:config.filename) && executable('mvn'))
+    if !(filereadable(a:config.filename) && executable(a:config.command))
         return []
     endif
     let pom_file= fnamemodify(a:config.filename, ':p')
@@ -213,7 +217,7 @@ function! s:generate_effective_pom(config)
     call storage.persist()
 
     call javaclasspath#util#spawn(join([
-    \   'mvn',
+    \   a:config.command,
     \   printf('--file "%s"', pom_file),
     \   'help:effective-pom',
     \   printf('-Doutput="%s"', mem.epom_path),
@@ -245,7 +249,7 @@ function! s:build_classpath(config)
     call storage.persist()
 
     call javaclasspath#util#spawn(join([
-    \   'mvn',
+    \   a:config.command,
     \   printf('--file "%s"', pom_file),
     \   'dependency:build-classpath',
     \   printf('-Dmdep.outputFile="%s"', mem.cp_path),
